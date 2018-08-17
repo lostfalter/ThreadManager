@@ -1,0 +1,20 @@
+@startuml internal manager and external implemented creator
+
+skinparam monochrome true
+
+hide footbox
+
+Actor user
+
+create "thread controller" as controller
+create "external thread creator" as creator
+create "thread manager" as tm
+controller -> tm : create thread manager with external thread creator
+
+...
+user --> creator : create new thread
+creator --> user : thread token
+...
+
+
+@enduml

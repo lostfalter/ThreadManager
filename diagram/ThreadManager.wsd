@@ -1,0 +1,31 @@
+@startuml
+
+class ThreadController {
+    +customize(settings)
+    +customize(creator)
+    +getThreadManager()
+    +getThreadCreator()
+    -ThreadManagerBuilder builder
+}
+
+class ThreadManagerBuilder {
+    +createThreadManager()
+}
+
+class ThreadManager {
+    +getCreator()
+    +setPriority(name)
+    +getDiagnoseInfo(name)
+    +getAllDiagnoseInfo()
+}
+
+class ThreadCreator {
+    +createThread
+    +createThreadWithPriority
+}
+
+ThreadManagerBuilder *-- ThreadManager : create
+ThreadManager *-- ThreadCreator : create
+
+
+@enduml

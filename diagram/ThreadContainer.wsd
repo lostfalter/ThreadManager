@@ -1,0 +1,23 @@
+@startuml thread container state transition diagram
+
+
+[*] -> Initial : create container with task function
+
+
+Initial --> RunThread : Run
+Initial --> Exit : Destroy
+
+state  RunThread {
+    [*] --> Setup
+
+    Setup --> Running : With system call
+
+    Running --> [*]
+}
+
+RunThread --> Exit
+
+Exit --> [*]
+
+
+@enduml

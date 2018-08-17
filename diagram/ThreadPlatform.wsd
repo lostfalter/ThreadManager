@@ -1,0 +1,39 @@
+@startuml Internal implemented thread management architecture
+
+left to right direction
+
+skinparam monochrome true
+
+rectangle system_api {
+    [Windows API]
+    [OSX API]
+    [QNX API]
+    [IOS API]
+    [Android API]
+    
+    [Windows API] -[hidden]- [OSX API]
+    [OSX API] -[hidden]- [QNX API]
+    [QNX API] -[hidden]- [IOS API]
+    [IOS API] -[hidden]- [Android API]
+
+}
+    
+
+rectangle "platform specific" as ps {
+    interface "thread platform" as platform
+
+    platform - [thread platform windows]
+    platform - [thread platform osx]
+    platform - [thread platform qnx]
+    platform - [thread platform ios]
+    platform - [thread platform android]
+
+    [thread platform windows] ..> [Windows API] : call
+    [thread platform osx] ..> [OSX API] : call
+    [thread platform qnx] ..> [QNX API] : call
+    [thread platform ios] ..> [IOS API] : call
+    [thread platform android] ..> [Android API] : call
+}
+
+
+@enduml

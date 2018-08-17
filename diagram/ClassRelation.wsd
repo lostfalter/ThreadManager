@@ -1,0 +1,118 @@
+@startuml class relation diagram
+
+skinparam monochrome true
+
+
+class ThreadController {
+    +customize(settings)
+    +customize(creator)
+    +getThreadManager()
+    +getThreadCreator()
+}
+
+
+interface ThreadCreator {
+    +createThread(func)
+    +createThread(func, priority)
+}
+
+class ThreadCreatorImpl
+ThreadCreator <|-- ThreadCreatorImpl
+
+
+interface ThreadManangerBuilder {
+    +CreateThreadManager()
+}
+
+class InternalThreadManagerBuilder
+ThreadManangerBuilder <|-- InternalThreadManagerBuilder
+
+class ExternalThreadManagerBuilder
+ThreadManangerBuilder <|-- ExternalThreadManagerBuilder
+
+
+interface ThreadManager {
+    +getThreadCreator()
+    +setPriority(priority)
+    +getDiagnoseInfo(thread name)
+    +getAllDiagnoseInfo()
+}
+
+ThreadController *-- ThreadManager
+ThreadController *-- ThreadCreator
+
+class ThreadManagerImpl
+ThreadManager <|-- ThreadManagerImpl
+InternalThreadManagerBuilder *-- ThreadManagerImpl
+
+class ExternalThreadManager
+ThreadManager <|-- ExternalThreadManager
+ExternalThreadManagerBuilder *-- ExternalThreadManager
+ExternalThreadManagerBuilder *-- ThreadCreator
+
+
+ThreadController *-- InternalThreadManagerBuilder
+ThreadController *-- ExternalThreadManagerBuilder
+
+interface ThreadToken {
+    +joinable()
+    +join()
+    +nativeHandle()
+}
+
+ThreadCreator *-- ThreadToken
+
+interface ThreadDiagnoseInfo {
+    +toString()
+    +getThreadName()
+    +getThreadPriority()
+    +getNativeId()
+    +getThreadTimeStatistic()
+}
+
+interface ThreadTimeStatistic {
+    +toString()
+    +getCreateTime()
+    +getMeasureTime()
+    +getRunningTime()
+    +getCpuUsage()
+}
+
+class ThreadHelper {
+    +SetThreadName(token, name)
+    +SetThreadPriority(token, priority)
+    +GetThreadPriority(token, priority)
+    +GetThreadTimeStatistic(token, threadCreatTime)
+    +GetCurrentThreadId(token)
+}
+
+class ThreadContainer {
+    +Run()
+    +GetName()
+    +SetPriority(priority)
+    +GetDiagnoseInfo()
+}
+
+class ThreadTokenImpl
+ThreadToken <|-- ThreadTokenImpl
+
+class ThreadTimeStatisticImpl
+ThreadTimeStatistic <|-- ThreadTimeStatisticImpl
+
+class ThreadDiagnoseInfoImpl
+ThreadDiagnoseInfo <|-- ThreadDiagnoseInfoImpl
+
+ThreadManagerImpl *-- ThreadContainer
+ThreadManagerImpl *-- ThreadDiagnoseInfo
+ThreadManagerImpl *-- ThreadCreatorImpl
+ThreadCreatorImpl *-- ThreadContainer
+
+ThreadContainer *-- ThreadTokenImpl
+ThreadContainer *-- ThreadHelper
+ThreadContainer *-- ThreadDiagnoseInfoImpl
+ThreadHelper *-- ThreadTimeStatisticImpl
+ThreadDiagnoseInfo *-- ThreadTimeStatistic
+ 
+
+
+@enduml

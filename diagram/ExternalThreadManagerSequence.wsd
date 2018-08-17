@@ -1,0 +1,45 @@
+@startuml use external thread manager sequence
+
+skinparam monochrome true
+
+hide footbox
+
+actor User
+
+create "external thread manager" as tm
+User -> tm : create
+create "external thread creator" as creator
+tm -> creator : lazy create or other initialize method
+
+actor TASDK
+
+create "thread controller" as controller
+TASDK -> controller : create thread controller at global space
+
+User -> controller : inject thread manager
+
+
+TASDK -> controller : get thread creator from thread controller
+controller -> tm : get thread creator
+
+
+
+tm -> controller : return thread creator
+controller -> TASDK : return thread creator
+
+TASDK -> creator : create thread
+create "thread token" as token
+
+creator -> token : create thread container and return its token
+creator -> TASDK : return thread token
+
+User --> tm : set priority for specific thread
+User --> tm : get diagnose info for specific thread
+User --> tm : get diagnose info for all threads
+
+TASDK --> token : query joinable
+TASDK --> token : join thread
+
+
+
+@enduml

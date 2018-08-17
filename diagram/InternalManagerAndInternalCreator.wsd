@@ -1,0 +1,27 @@
+@startuml internal implemented manager and creator
+
+skinparam monochrome true
+
+hide footbox
+
+Actor user
+
+create "thread manager" as tm
+
+create "thread creator" as creator
+tm -> creator : create
+tm -> creator : register listener
+...
+user --> creator : create new thread
+creator --> tm : notify new thread container
+creator --> user : thread token
+...
+user --> tm : set priority
+tm --> user : set result
+...
+user --> tm : query diagnose info
+tm --> user : return diagnose info
+...
+tm -> creator : unregister listener
+
+@enduml

@@ -1,0 +1,91 @@
+@startuml Internal implemented thread management architecture
+
+
+skinparam monochrome true
+
+rectangle system_api {
+    [Windows API]
+    [OSX API]
+    [QNX API]
+    [IOS API]
+    [Android API]
+    
+    [Windows API] -[hidden]- [OSX API]
+    [OSX API] -[hidden]- [QNX API]
+    [QNX API] -[hidden]- [IOS API]
+    [IOS API] -[hidden]- [Android API]
+
+}
+
+    
+package "thread management" as mm {
+
+    rectangle "thread management interface" as tmi {
+        interface "thread controller" as controller
+        interface "thread manager" as tm
+        interface "thread creator" as creator
+        interface "thread token" as token
+        interface "thread diagnose info" as diagnose
+        interface "thread time statistic" as ts
+
+        controller -[hidden]- tm
+        tm -[hidden]- creator
+        creator -[hidden]- token
+        token -[hidden]- diagnose
+        diagnose -[hidden]- ts
+    }
+
+    rectangle "implementation" {
+        together "manager" {
+            tm - [thread manager impl]
+            [thread manager impl] ..> [config parser] : use
+
+            controller - [thread controller]
+            [thread controller] ..> [thread manager builder] : use
+            [thread manager builder] ..> [thread manager impl] : use
+
+            creator - [thread creator impl]
+
+            token - [thread token impl]
+            diagnose - [thread diagnose info impl]
+            ts - [thread time statistic impl]
+
+            [thread controller] -[hidden]- [thread manager builder]
+            [thread manager builder] -[hidden]- [thread manager impl]
+            [thread manager impl] -[hidden]- [thread creator impl]
+            [thread creator impl] -[hidden]- [thread token impl]
+            [thread token impl] -[hidden]- [thread container]
+            [thread container] -[hidden]- [thread diagnose info impl]
+            [thread diagnose info impl] -[hidden]- [thread time statistic impl]
+
+        }
+
+        
+    }
+
+    rectangle "platform specific" as ps {
+            interface "thread platform" as platform
+
+            platform - [thread platform windows]
+            platform - [thread platform osx]
+            platform - [thread platform qnx]
+            platform - [thread platform ios]
+            platform - [thread platform android]
+
+            [thread platform windows] ..> [Windows API] : call
+            [thread platform osx] ..> [OSX API] : call
+            [thread platform qnx] ..> [QNX API] : call
+            [thread platform ios] ..> [IOS API] : call
+            [thread platform android] ..> [Android API] : call
+
+            [thread creator impl] ..> platform : use
+            [thread manager impl] ..> platform : use
+        }
+    
+    tmi -[hidden]--> implementation
+}
+
+mm -[hidden]-> system_api
+ps -[hidden]-> system_api
+
+@enduml

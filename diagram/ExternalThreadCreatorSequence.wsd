@@ -1,0 +1,36 @@
+@startuml user and tasdk sequence
+
+skinparam monochrome true
+
+hide footbox
+
+actor User
+
+create "external thread creator" as creator
+User -> creator : create
+
+actor TASDK
+create "thread controller" as controller
+TASDK -> controller : create thread controller at global space
+
+User -> controller : inject creator
+
+create "external thread creator wrapper" as tm
+controller -> tm : create external thread creator wrapper
+
+
+TASDK -> controller : get thread creator from thread controller
+controller -> tm : get thread creator
+tm -> controller : return injected external thread creator
+controller -> TASDK : return thread creator
+
+TASDK -> creator : create thread
+create "thread token" as token
+creator -> token : create thread container and return its token
+creator -> TASDK : return thread token
+
+TASDK --> token : query joinable
+TASDK --> token : join thread
+
+
+@enduml

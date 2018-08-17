@@ -1,0 +1,16 @@
+@startuml
+
+
+[*] -> Initial : create token with thread
+
+
+Initial --> Running : valid thread
+Initial --> Exit : invalid thread
+
+Running --> Exit : join
+
+Exit --> Exit : join
+Exit --> [*] : destroy token
+
+
+@enduml

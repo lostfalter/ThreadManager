@@ -1,0 +1,47 @@
+@startuml user and tasdk sequence
+
+skinparam monochrome true
+
+hide footbox
+
+actor User
+
+
+actor TASDK
+create "thread controller" as controller
+TASDK -> controller : create thread controller at global space
+
+User --> controller : customize settings
+
+
+TASDK -> controller : get thread creator from thread controller
+
+create "internal thread manager" as tm
+controller --> tm : lazy create thread manager
+
+create "internal thread creator" as creator
+tm -> creator : create thread creator
+
+controller -> tm : get thread creator
+tm -> controller : return thread creator
+
+controller -> TASDK : return thread creator
+TASDK -> creator : create thread
+create "thread token" as token
+creator -> token : create thread container and return its token
+creator -> tm : notify new thread container
+creator -> TASDK : return thread token
+
+
+User --> controller : get thread manager
+controller --> User : return thread manager
+
+User --> tm : set priority for specific thread
+User --> tm : get diagnose info for specific thread
+User --> tm : get diagnose info for all threads
+
+TASDK --> token : query joinable
+TASDK --> token : join thread
+
+
+@enduml
